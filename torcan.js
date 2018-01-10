@@ -1,7 +1,5 @@
 (function(window){
     
-    var tweenQueue = [];
-
     window.torcan = function(){
 
         var torcan = this;
@@ -15,6 +13,53 @@
 
         t.canvasX = $("#canvas").offset().left;
         t.canvasY = $("#canvas").offset().top;
+        
+        t.tweenQueue = [];
+        
+        t.Tween = function(prop, from, to, duration){
+
+            var tween = this;
+
+            this.prop = prop;
+            this.from = from;
+            this.to = to;
+            this.duration = duration;
+
+            var exists = false;
+
+            for(var i = 0; i < t.tweenQueue.length; i++){
+                if(t.tweenQueue[i].prop === prop){
+                    exists = true;
+                    t.tweenQueue.splice(i, 1);
+                }
+            }
+
+            var search = prop.split(".");
+            var item = search[search.length - 1];
+            var endpoint = torcan;
+            for(var i = 0; i < search.length - 1; i++){
+                endpoint = endpoint[search[i]];
+            }
+            if(endpoint[item] === undefined){
+                return false;
+            }
+            endpoint[item] = from;
+            var start = Date.now();
+            this.step = function(endpoint){
+                var now = Date.now();
+                var t = (now - start) / duration;
+
+                endpoint[item] = from + ((to - from) * t)
+                console.log(endpoint[item]);
+
+                if(now - start > duration){
+                    endpoint[item] = to;
+                } else {
+                    window.requestAnimationFrame(function(){tween.step(endpoint)});
+                }
+            }
+            this.step(endpoint);
+        }
 
         //manage mouse and touch control
         var cursorHandler = function(){
@@ -102,9 +147,10 @@
                     //h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
                     
                     //tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200);
-                    tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200);
+                    //tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200);
                     
-                    tweenQueue.push(new Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200));
+                    t.tweenQueue.push(new t.Tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200));
+                    t.tweenQueue.push(new t.Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200));
                 } else {
                     h.dragging = true;
                     h.cursorStartX = null;
@@ -155,51 +201,6 @@
             t.setup();
             $(window).resize(t.setup);
         }
-    }
-    
-    //TODO queue tweens and clear from/run through queue
-    function Tween(prop, from, to, duration){
-        
-        var tween = this;
-        
-        this.prop = prop;
-        this.from = from;
-        this.to = to;
-        this.duration = duration;
-        
-        var exists = false;
-        
-        for(var i = 0; i < tweenQueue.length; i++){
-            if(tweenQueue[i].prop === prop){
-                exists = true;
-                tweenQueue.splice(i, 1);
-            }
-        }
-        
-        var search = prop.split(".");
-        var item = search[search.length - 1];
-        var endpoint = torcan;
-        for(var i = 0; i < search.length - 1; i++){
-            endpoint = endpoint[search[i]];
-        }
-        if(endpoint[item] === undefined){
-            return false;
-        }
-        endpoint[item] = from;
-        var start = Date.now();
-        this.step = function(endpoint){
-            var now = Date.now();
-            var t = now / duration;
-            
-            endpoint[item] = from + ((to - from) * t)
-            
-            if(now - start > duration){
-                endpoint[item] = to;
-            } else {
-                window.requestAnimationFrame(tween.step);
-            }
-        }
-        this.step(endpoint);
     }
     
 })(typeof window !== "undefined" ? window : this)
