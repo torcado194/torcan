@@ -18,6 +18,7 @@ t.press //overload, called when user clicks or taps
 ```
    
 torcan will make your canvas visually identical on all devices
+
 it works by fullscreening the canvas and setting up a viewport box which scales with and is always contained in the screen
 
 it also handles both touch and mouse inputs, and tweens touch positions
