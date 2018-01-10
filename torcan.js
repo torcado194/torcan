@@ -2,14 +2,14 @@
     
     var tweenQueue = [];
 
-    var torcan = function(){
+    window.torcan = function(){
 
         var torcan = this;
         var t = torcan;
 
         t.scale = 1;
-        t.w; //virtual width/height
-        t.h;
+        t.w = 100; //virtual width/height
+        t.h = 100;
         t.offsetH = 0;
         t.offsetV = 0;
 
@@ -81,8 +81,8 @@
                     var e = window.event;
                 h.cursorX = e.pageX - t.canvasX;
                 h.cursorY = e.pageY - t.canvasY;
-                h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
-                h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
+                h.x = ((h.cursorX - (t.offsetH / 2)) / t.scale);
+                h.y = ((h.cursorY - (t.offsetV / 2)) / t.scale);
             }
 
             h.touchXY = function(e){
@@ -113,8 +113,8 @@
                     h.cursorX = e.targetTouches[0].pageX - t.canvasX;
                     h.cursorY = e.targetTouches[0].pageY - t.canvasY;
 
-                    h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
-                    h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
+                    h.x = ((h.cursorX - (t.offsetH / 2)) / t.scale);
+                    h.y = ((h.cursorY - (t.offsetV / 2)) / t.scale);
                 }
             }
         };
@@ -126,10 +126,10 @@
             t.offsetV = 0;
             if($("#content").width() < $("#content").height()){
                 t.offsetV = t.canvas.height - t.canvas.width;
-                t.scale = ($("#content").width()/100);
+                t.scale = ($("#content").width() / t.w);
             } else {
                 t.offsetH = t.canvas.width - t.canvas.height;
-                t.scale = ($("#content").height()/100);
+                t.scale = ($("#content").height() / t.h);
             }
             t.c.setTransform(1, 0, 0, 1, t.offsetH / 2, t.offsetV / 2);
             
@@ -143,11 +143,11 @@
             
             t.cursorHandler = new cursorHandler();
             
-            canvas.addEventListener("mousedown",  t.cursorHandler.mouseDown(e), false);
-            canvas.addEventListener("mousemove",  t.cursorHandler.mouseXY(e),   false);
-            canvas.addEventListener("touchstart", t.cursorHandler.touchDown(e), false);
-            canvas.addEventListener("touchmove",  t.cursorHandler.touchXY(e),   true);
-            canvas.addEventListener("touchend",   t.cursorHandler.touchUp(e),   false);
+            canvas.addEventListener("mousedown",  t.cursorHandler.mouseDown, false);
+            canvas.addEventListener("mousemove",  t.cursorHandler.mouseXY,   false);
+            canvas.addEventListener("touchstart", t.cursorHandler.touchDown, false);
+            canvas.addEventListener("touchmove",  t.cursorHandler.touchXY,   true);
+            canvas.addEventListener("touchend",   t.cursorHandler.touchUp,   false);
             
             document.body.addEventListener("mouseup",     t.cursorHandler.mouseUp, false);
             document.body.addEventListener("touchcancel", t.cursorHandler.touchUp, false);
