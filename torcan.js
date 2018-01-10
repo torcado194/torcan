@@ -1,4 +1,6 @@
 (function(window){
+    
+    var tweenQueue = [];
 
     var torcan = function(){
 
@@ -98,8 +100,11 @@
                     
                     //h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
                     //h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
-                    tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200);
+                    
+                    //tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200);
                     tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200);
+                    
+                    tweenQueue.push(new Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200));
                 } else {
                     h.dragging = true;
                     h.cursorStartX = null;
@@ -153,7 +158,24 @@
     }
     
     //TODO queue tweens and clear from/run through queue
-    function tween(prop, from, to, duration){
+    function Tween(prop, from, to, duration){
+        
+        var tween = this;
+        
+        this.prop = prop;
+        this.from = from;
+        this.to = to;
+        this.duration = duration;
+        
+        var exists = false;
+        
+        for(var i = 0; i < tweenQueue.length; i++){
+            if(tweenQueue[i].prop === prop){
+                exists = true;
+                tweenQueue.splice(i, 1);
+            }
+        }
+        
         var search = prop.split(".");
         var item = search[search.length - 1];
         var endpoint = torcan;
@@ -165,7 +187,7 @@
         }
         endpoint[item] = from;
         var start = Date.now();
-        function step(){
+        this.step = function(endpoint){
             var now = Date.now();
             var t = now / duration;
             
@@ -174,9 +196,10 @@
             if(now - start > duration){
                 endpoint[item] = to;
             } else {
-                window.requestAnimationFrame(step);
+                window.requestAnimationFrame(tween.step);
             }
         }
+        this.step(endpoint);
     }
     
 })(typeof window !== "undefined" ? window : this)
