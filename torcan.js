@@ -95,8 +95,11 @@
                     //TODO
                     //mouseTween("mouseRelX", mouseRelX, ((e.targetTouches[0].pageX - $("#canvas").offset().left) - (offsetH / 2)) / scale, 200, "linear", true, false)
                     //mouseTween("mouseRelY", mouseRelY, ((e.targetTouches[0].pageY - $("#canvas").offset().left) - (offsetV / 2)) / scale, 200, "linear", true, false)
-                    h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
-                    h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
+                    
+                    //h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
+                    //h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
+                    tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200);
+                    tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200);
                 } else {
                     h.dragging = true;
                     h.cursorStartX = null;
