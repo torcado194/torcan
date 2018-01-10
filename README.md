@@ -6,10 +6,10 @@ another canvas library
 torcan makes a fullscreen canvas that scales with the device. It creates a viewport box that is always contained and centered within the screen.
 
 ```
-   var t = new torcan();
-   t.init(document.getElementById("canvas"));
-   
-   t.c //canvas context
+var t = new torcan();
+t.init(document.getElementById("canvas"));
+
+t.c //canvas context
 ```
    
 torcan will make your canvas visually identical on all devices

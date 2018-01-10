@@ -11,8 +11,8 @@
         t.offsetH = 0;
         t.offsetV = 0;
 
-        t.canvasX = $("#canvas").offset().left;
-        t.canvasY = $("#canvas").offset().top;
+        t.canvasX = document.getElementById("canvas").offsetLeft;
+        t.canvasY = document.getElementById("canvas").offsetTop;
         
         t.tweenQueue = [];
         
@@ -139,15 +139,6 @@
 
                     h.cursorX = e.targetTouches[0].pageX - t.canvasX;
                     h.cursorY = e.targetTouches[0].pageY - t.canvasY;
-                    //TODO
-                    //mouseTween("mouseRelX", mouseRelX, ((e.targetTouches[0].pageX - $("#canvas").offset().left) - (offsetH / 2)) / scale, 200, "linear", true, false)
-                    //mouseTween("mouseRelY", mouseRelY, ((e.targetTouches[0].pageY - $("#canvas").offset().left) - (offsetV / 2)) / scale, 200, "linear", true, false)
-                    
-                    //h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
-                    //h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
-                    
-                    //tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200);
-                    //tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200);
                     
                     t.tweenQueue.push(new t.Tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200));
                     t.tweenQueue.push(new t.Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200));
@@ -170,12 +161,14 @@
             t.canvas.height = window.innerHeight;
             t.offsetH = 0;
             t.offsetV = 0;
-            if($("#content").width() < $("#content").height()){
+            var width = document.getElementById("canvas").width;
+            var height = document.getElementById("canvas").height;
+            if(width < height){
                 t.offsetV = t.canvas.height - t.canvas.width;
-                t.scale = ($("#content").width() / t.w);
+                t.scale = (width / t.w);
             } else {
                 t.offsetH = t.canvas.width - t.canvas.height;
-                t.scale = ($("#content").height() / t.h);
+                t.scale = (height / t.h);
             }
             t.c.setTransform(t.scale, 0, 0, t.scale, t.offsetH / 2, t.offsetV / 2);
         }
@@ -198,7 +191,7 @@
             document.body.addEventListener("touchcancel", t.cursorHandler.touchUp, false);
             
             t.setup();
-            $(window).resize(t.setup);
+            window.addEventListener("resize", t.setup, false);
         }
     }
     
