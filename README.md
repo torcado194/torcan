@@ -23,4 +23,5 @@ it works by fullscreening the canvas and setting up a viewport box which scales 
 it also handles both touch and mouse inputs, and tweens touch positions
 
 [here's an example project](http://torcado.com/toys/chromab.html)
+
 ![chromab gif](http://torcado.com/chromab.gif)
