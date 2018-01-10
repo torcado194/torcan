@@ -6,6 +6,7 @@
         var t = torcan;
 
         t.scale = 1;
+        //TODO: allow user specified virtual size and aspect ratio
         t.w = 100; //virtual width/height
         t.h = 100;
         t.offsetH = 0;
@@ -79,6 +80,10 @@
             h.pressed = false;
             h.dragging = false;
             h.usingTouch = false; //changes per action, if for some reason a user has both
+            
+            h.press = function(){
+                //template, overritten by user
+            }
 
             h.mouseDown = function(e){
                 h.pressed = true;
@@ -107,9 +112,8 @@
                 h.cursorStart = false;
                 h.mouseXY(e);
 
-                //????
                 if((Math.abs(h.cursorX - h.cursorStartX) < h.clickRange) && (Math.abs(h.cursorY - h.cursorStartY) < h.clickRange)){
-                    //h.mouseup = true;
+                    h.press();
                 }
             }
 
@@ -117,7 +121,7 @@
                 h.pressed = false;
                 h.cursorStart = false;
                 if((Math.abs(h.cursorX - h.cursorStartX) < h.clickRange) && (Math.abs(h.cursorY - h.cursorStartY) < h.clickRange)){
-                    //h.mouseup = true;
+                    h.press();
                 }
             }
 
@@ -140,8 +144,8 @@
                     h.cursorX = e.targetTouches[0].pageX - t.canvasX;
                     h.cursorY = e.targetTouches[0].pageY - t.canvasY;
                     
-                    t.tweenQueue.push(new t.Tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 200));
-                    t.tweenQueue.push(new t.Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 200));
+                    t.tweenQueue.push(new t.Tween("cursorHandler.x", h.x, (h.cursorX - (t.offsetH / 2)) / t.scale, 100));
+                    t.tweenQueue.push(new t.Tween("cursorHandler.y", h.y, (h.cursorY - (t.offsetV / 2)) / t.scale, 100));
                 } else {
                     h.dragging = true;
                     h.cursorStartX = null;
@@ -163,14 +167,14 @@
             t.offsetV = 0;
             var width = document.getElementById("canvas").width;
             var height = document.getElementById("canvas").height;
-            if(width < height){
+            if(width < height){ //set viewport size to largest square
                 t.offsetV = t.canvas.height - t.canvas.width;
                 t.scale = (width / t.w);
             } else {
                 t.offsetH = t.canvas.width - t.canvas.height;
                 t.scale = (height / t.h);
             }
-            t.c.setTransform(t.scale, 0, 0, t.scale, t.offsetH / 2, t.offsetV / 2);
+            t.c.setTransform(t.scale, 0, 0, t.scale, t.offsetH / 2, t.offsetV / 2); //center and scale viewport
         }
         
         t.init = function(canvas){
@@ -181,6 +185,7 @@
             
             t.cursorHandler = new cursorHandler();
             
+            //event listeners
             canvas.addEventListener("mousedown",  t.cursorHandler.mouseDown, false);
             canvas.addEventListener("mousemove",  t.cursorHandler.mouseXY,   false);
             canvas.addEventListener("touchstart", t.cursorHandler.touchDown, false);
