@@ -177,8 +177,7 @@
                 t.offsetH = t.canvas.width - t.canvas.height;
                 t.scale = ($("#content").height() / t.h);
             }
-            t.c.setTransform(1, 0, 0, 1, t.offsetH / 2, t.offsetV / 2);
-            
+            t.c.setTransform(t.scale, 0, 0, t.scale, t.offsetH / 2, t.offsetV / 2);
         }
         
         t.init = function(canvas){
