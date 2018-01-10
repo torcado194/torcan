@@ -1,13 +1,16 @@
 var torcan = function(){
     
     var torcan = this;
+    var t = torcan;
     
-    torcan.scale = 1;
-    torcan.offsetH = 0;
-    torcan.offsetV = 0;
+    t.scale = 1;
+    t.w; //virtual width/height
+    t.h;
+    t.offsetH = 0;
+    t.offsetV = 0;
     
-    torcan.canvasX = $("#canvas").offset().left;
-    torcan.canvasY = $("#canvas").offset().top;
+    t.canvasX = $("#canvas").offset().left;
+    t.canvasY = $("#canvas").offset().top;
     
     //manage mouse and touch control
     var cursorHandler = function(){
@@ -72,10 +75,10 @@ var torcan = function(){
         h.mouseXY = function(e){
             if (!e)
                 var e = window.event;
-            h.cursorX = e.pageX - torcan.canvasX;
-            h.cursorY = e.pageY - torcan.canvasY;
-            h.x = (h.cursorX - (torcan.offsetH / 2)) / torcan.scale;
-            h.y = (h.cursorY - (torcan.offsetV / 2)) / torcan.scale;
+            h.cursorX = e.pageX - t.canvasX;
+            h.cursorY = e.pageY - t.canvasY;
+            h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
+            h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
         }
         
         h.touchXY = function(e){
@@ -85,230 +88,59 @@ var torcan = function(){
             if((Math.abs(h.cursorX - h.cursorStartX) < h.dragRange) && (Math.abs(h.cursorY - h.cursorStartY) < h.dragRange)){
                 h.dragging = false;
                 
-                h.cursorX = e.targetTouches[0].pageX - torcan.canvasX;
-                h.cursorY = e.targetTouches[0].pageY - torcan.canvasY;
+                h.cursorX = e.targetTouches[0].pageX - t.canvasX;
+                h.cursorY = e.targetTouches[0].pageY - t.canvasY;
                 //TODO
                 //mouseTween("mouseRelX", mouseRelX, ((e.targetTouches[0].pageX - $("#canvas").offset().left) - (offsetH / 2)) / scale, 200, "linear", true, false)
                 //mouseTween("mouseRelY", mouseRelY, ((e.targetTouches[0].pageY - $("#canvas").offset().left) - (offsetV / 2)) / scale, 200, "linear", true, false)
-                h.x = (h.cursorX - (torcan.offsetH / 2)) / torcan.scale;
-                h.y = (h.cursorY - (torcan.offsetV / 2)) / torcan.scale;
+                h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
+                h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
             } else {
                 h.dragging = true;
                 h.cursorStartX = null;
                 h.cursorStartY = null;
                 
-                h.cursorX = e.targetTouches[0].pageX - torcan.canvasX;
-                h.cursorY = e.targetTouches[0].pageY - torcan.canvasY;
+                h.cursorX = e.targetTouches[0].pageX - t.canvasX;
+                h.cursorY = e.targetTouches[0].pageY - t.canvasY;
 
-                h.x = (h.cursorX - (torcan.offsetH / 2)) / torcan.scale;
-                h.y = (h.cursorY - (torcan.offsetV / 2)) / torcan.scale;
+                h.x = (h.cursorX - (t.offsetH / 2)) / t.scale;
+                h.y = (h.cursorY - (t.offsetV / 2)) / t.scale;
             }
         }
     };
     
-    torcan.init = function(canvas){
-        torcan.canvas = canvas;
-        torcan.c = torcan.canvas.getContext('2d');
-        torcan.c.imageSmoothingEnabled = true;
-        torcan.c.globalCompositeOperation = 'source-over';
+    t.init = function(canvas){
+        t.canvas = canvas;
+        t.c = t.canvas.getContext('2d');
+        t.c.imageSmoothingEnabled = true;
+        t.c.globalCompositeOperation = 'source-over';
         
-        torcan.cursorHandler = new cursorHandler();
+        t.cursorHandler = new cursorHandler();
         
-        canvas.addEventListener("mousedown",  torcan.cursorHandler.mouseDown(e), false);
-        canvas.addEventListener("mousemove",  torcan.cursorHandler.mouseXY(e),   false);
-        canvas.addEventListener("touchstart", torcan.cursorHandler.touchDown(e), false);
-        canvas.addEventListener("touchmove",  torcan.cursorHandler.touchXY(e),   true);
-        canvas.addEventListener("touchend",   torcan.cursorHandler.touchUp(e),   false);
+        canvas.addEventListener("mousedown",  t.cursorHandler.mouseDown(e), false);
+        canvas.addEventListener("mousemove",  t.cursorHandler.mouseXY(e),   false);
+        canvas.addEventListener("touchstart", t.cursorHandler.touchDown(e), false);
+        canvas.addEventListener("touchmove",  t.cursorHandler.touchXY(e),   true);
+        canvas.addEventListener("touchend",   t.cursorHandler.touchUp(e),   false);
 
-        document.body.addEventListener("mouseup",     torcan.cursorHandler.mouseUp, false);
-        document.body.addEventListener("touchcancel", torcan.cursorHandler.touchUp, false);
+        document.body.addEventListener("mouseup",     t.cursorHandler.mouseUp, false);
+        document.body.addEventListener("touchcancel", t.cursorHandler.touchUp, false);
     }
-}
+    
+    t.setup = function(){
+        t.canvas.width = window.innerWidth;
+        t.canvas.height = window.innerHeight;
+        t.offsetH = 0;
+        t.offsetV = 0;
+        if($("#content").width() < $("#content").height()){
+            t.offsetV = t.canvas.height - t.canvas.width;
+            t.scale = ($("#content").width()/100);
+        } else {
+            t.offsetH = t.canvas.width - t.canvas.height;
+            t.scale = ($("#content").height()/100);
+        }
+        t.c.setTransform(1, 0, 0, 1, t.offsetH / 2, t.offsetV / 2);
 
-
-
-
-
-
-var can, c, canX, canY, mouseIsDown = 0;
-    var cursorX = 0;
-    var cursorY = 0;
-    var mouseRelX = 0;
-    var mouseRelY = 0;
-    var mouseup = false;
-    var usingTouch = false;
-    var istouchstart = false;
-    var isdrag = false;
-    var cursorStart = false;
-    var cursorXStart, cursorYStart = 0;
-    var clickRange = 20;
-    var dragRange = 40;
-    var canvas = document.getElementById("canvas");
-    var c = canvas.getContext('2d');
-    c.imageSmoothingEnabled= true;
-    c.globalCompositeOperation = 'source-over';
-    canvas.addEventListener("mousedown", function(event){mouseDown(event)}, false);
-canvas.addEventListener("mousemove", function(event){mouseXY(event)}, false);
-canvas.addEventListener("touchstart", function(event){touchDown(event)}, false);
-canvas.addEventListener("touchmove", function(event){touchXY(event)}, true);
-canvas.addEventListener("touchend", function(event){touchUp(event)}, false);
-
-document.body.addEventListener("mouseup", mouseUp, false);
-document.body.addEventListener("touchcancel", touchUp, false);
-
-//touch/mouse device polyfill stuff. dont mess
-
-function mouseUp(event) {
-    mouseIsDown = 0;
-    mouseXY(event);
-    cursorStart = false;
-    if((cursorX < cursorXStart + clickRange && cursorX > cursorXStart - clickRange) && (cursorY < cursorYStart + clickRange && cursorY > cursorYStart - clickRange)){
-        mouseup = true;
     }
-}
-
-function touchUp(event) {
-    mouseIsDown = 0;
-    cursorStart = false;
-    if((cursorX < cursorXStart + clickRange && cursorX > cursorXStart - clickRange) && (cursorY < cursorYStart + clickRange && cursorY > cursorYStart - clickRange)){
-        mouseup = true;
-    }
-}
-
-function mouseDown(event) {
-    mouseIsDown = 1;
-    mouseXY(event);
-    usingTouch = false;
-    if(!cursorStart){
-        cursorStart = true;
-        cursorXStart = cursorX;
-        cursorYStart = cursorY;
-    }
-}
-
-function touchDown(event) {
-    mouseIsDown = 1;
-    touchXY(event);
-    usingTouch = true;
-    istouchstart = true;
-    if(!cursorStart){
-        cursorStart = true;
-        cursorXStart = cursorX;
-        cursorYStart = cursorY;
-    }
-}
-
-function mouseXY(e) {
-    if (!e)
-        var e = event;
-    canX = e.pageX - $("#canvas").offset().left;
-    canY = e.pageY - $("#canvas").offset().top;
-    cursorX = canX;
-    cursorY = canY;
-    mouseRelX = (cursorX - (offsetH / 2)) / scale;
-    mouseRelY = (cursorY - (offsetV / 2)) / scale;
-}
-
-function touchXY(e) {
-    if (!e)
-        var e = event;
-    e.preventDefault();
-    if((cursorX < cursorXStart + dragRange && cursorX > cursorXStart - dragRange) && (cursorY < cursorYStart + dragRange && cursorY > cursorYStart - dragRange)){
-        isdrag = false;
-    } else {
-        isdrag = true;
-        cursorXStart = null;
-        cursorYStart = null;
-    }
-    if(!isdrag){
-        istouchstart = false;
-
-        canX = e.targetTouches[0].pageX - $("#canvas").offset().left;
-        canY = e.targetTouches[0].pageY - $("#canvas").offset().top;
-        cursorX = canX;
-        cursorY = canY;
-        mouseTween("mouseRelX", mouseRelX, ((e.targetTouches[0].pageX - $("#canvas").offset().left) - (offsetH / 2)) / scale, 200, "linear", true, false)
-        mouseTween("mouseRelY", mouseRelY, ((e.targetTouches[0].pageY - $("#canvas").offset().left) - (offsetV / 2)) / scale, 200, "linear", true, false)
-    } else {
-        canX = e.targetTouches[0].pageX - $("#canvas").offset().left;
-        canY = e.targetTouches[0].pageY - $("#canvas").offset().top;
-
-        cursorX = canX;
-        cursorY = canY;
-        mouseRelX = (cursorX - (offsetH / 2)) / scale;
-        mouseRelY = (cursorY - (offsetV / 2)) / scale;
-    }
-
-}
-
-//var initialization
-var transformScaleWidth = 1;
-var transformScaleHeight = 1;
-var prevWidth = $("#content").width();
-var prevHeight = $("#content").height();
-var w = 500;
-var h = 500;
-var offsetH = 0;
-var offsetV = 0;
-var scale = 1;
-var lineWidth = 4;
-var mouseDist;
-
-//variable and other initialization that is based on screen size
-function setup(){
-    $("#content").width(window.innerWidth);
-    $("#content").height(window.innerHeight);
-    canvas.width = $("#content").width();
-    canvas.height = $("#content").height();
-    offsetH = 0;
-    offsetV = 0;
-    if($("#content").width() < $("#content").height()){
-        offsetV = canvas.height - canvas.width;
-        scale = ($("#content").width()/100);
-    } else {
-        offsetH = canvas.width - canvas.height;
-        scale = ($("#content").height()/100);
-    }
-    w = 100;
-    h = 100;
-    transformScaleWidth = $("#content").width() / prevWidth;
-    transformScaleHeight = $("#content").height() / prevHeight;
-    prevWidth = $("#content").width();
-    prevHeight = $("#content").height();
-    lineWidth = 2;
-    c.lineWidth = 1 * scale;
-    c.setTransform(1, 0, 0, 1, offsetH / 2, offsetV / 2);
-
-}
-$(window).resize(function(){
-    setup();
-});
-setup();
-
-
-//the animation loop
-function step(){
-    window.requestAnimationFrame(step);
-    //DO CANVAS STUFF HERE
-
-    c.fillStyle = '#FFCE94';
-    c.save();
-    c.translate(0 - offsetH / 2, 0 - offsetV / 2);
-    c.fillRect(0,0,canvas.width,canvas.height); // clear canvas
-    c.restore();
-
-    c.lineWidth = 0.5 * scale;
-    c.strokeStyle = '#000';
-    c.strokeRect(0, 0, w * scale, h * scale);
-
-    c.lineWidth = 2 * scale;
-    c.strokeStyle = '#F3B97F';
-    c.beginPath();
-    c.arc((mouseRelX + 2) * scale, (mouseRelY + 2) * scale, 50, 0, 2 * Math.PI, false);
-    c.stroke();
-
-    c.strokeStyle = '#7AA563';
-    c.beginPath();
-    c.arc(mouseRelX * scale, mouseRelY * scale, 50, 0, 2 * Math.PI, false);
-    c.stroke();
+    $(window).resize(t.setup);
 }
