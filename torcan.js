@@ -175,6 +175,14 @@
                 t.scale = (height / t.h);
             }
             t.c.setTransform(t.scale, 0, 0, t.scale, t.offsetH / 2, t.offsetV / 2); //center and scale viewport
+            t.viewX = (t.offsetH / 2) / t.scale;
+            t.viewY = (t.offsetV / 2) / t.scale;
+            t.viewW = t.w + (t.offsetH / t.scale);
+            t.viewH = t.h + (t.offsetV / t.scale);
+            t.viewRight  = t.viewW - t.viewX;
+            t.viewLeft   = 0 - t.viewX;
+            t.viewBottom = t.viewH - t.viewY;
+            t.viewTop    = 0 - t.viewY;
         }
         
         t.init = function(canvas){
