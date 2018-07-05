@@ -46,6 +46,8 @@ this will cause the canvas to act as if the parent was the window, and will even
 
 [here's an example utilizing aspect ratio and container elements](http://torcado.com/toys/torcantest.html)
 
+left canvas has cover, right has contain. both have non-square aspect ratios
+both container elements have borders and padding, and right container has border-box: box-sizing. torcan handles all of these properties to ensure canvas is at max size without overflowing
 
 ## properties
 
