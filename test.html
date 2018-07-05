@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>torcan example</title>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 100%;
+        font: inherit;
+        vertical-align: baseline;
+    }
+    body {
+        overflow: hidden;
+        font-size: 0;
+    }
+    
+    #parent1 {
+        position: absolute;
+        left: 470px;
+        top: 150px;
+        width: 440px;
+        height: 370px;
+        overflow: auto;
+        resize: both;
+        padding: 14px;
+        background-color: #333;
+        border: 5px solid #e0298a;
+        box-sizing: border-box;
+    }
+    #parent2 {
+        position: absolute;
+        left: 80px;
+        top: 45px;
+        width: 250px;
+        height: 400px;
+        overflow: auto;
+        resize: both;
+        padding: 14px;
+        background-color: #333;
+        border: 5px solid #e0298a;
+    }
+</style>
+<body>
+    <canvas id="canvas"></canvas>
+    <div id="parent1">
+        <canvas id="canvas1"></canvas>
+    </div>
+    <div id="parent2">
+        <canvas id="canvas2"></canvas>
+    </div>
+</body>
+<script src="torcan.js"></script>
+<script>
+    
+    let t = new torcan(100, 100);
+    t.init(document.getElementById("canvas"));
+    
+    let t1 = new torcan(100, 50);
+    t1.init(document.getElementById("canvas1"), document.getElementById("parent1"));
+    
+    let t2 = new torcan(0.68, 1, true);
+    t2.init(document.getElementById("canvas2"), document.getElementById("parent2"));
+    
+    
+    function clearStep(){
+        window.requestAnimationFrame(clearStep);
+    }
+    window.requestAnimationFrame(clearStep);
+    //for some reason the first step function causes the canvas to flicker. This blank step function is to prevent that in the main step.
+    //this doesnt seem to be an issue in firefox. i have no idea why this happens, possibly a chrome bug.
+    
+    
+    function step1(){
+        window.requestAnimationFrame(step1);
+        
+        t.c.fillStyle = "#433183";
+        t.c.fillRect(t.viewX,t.viewY,t.viewW,t.viewH);
+        //t.c.fillRect(t.viewLeft,t.viewTop,t.viewW,t.viewH); //identical
+        
+        t.c.fillStyle = "#1e6889";
+        t.c.strokeStyle = "#172053";
+        t.c.lineWidth = 2;
+        t.c.fillRect(0,0,t.w,t.h);
+        t.c.strokeRect(0,0,t.w,t.h);
+        
+        t.c.strokeStyle = "#fff";
+        t.c.beginPath();
+        t.c.arc(20, 45, 20, 0, Math.PI * 2);
+        t.c.stroke();
+        
+        /* ================ */
+        
+        t1.c.fillStyle = "#751179";
+        t1.c.fillRect(t1.viewX,t1.viewY,t1.viewW,t1.viewH);
+        
+        t1.c.fillStyle = "#e0258a";
+        t1.c.strokeStyle = "#2cf1b1";
+        t1.c.lineWidth = 2;
+        t1.c.fillRect(0,0,t1.w,t1.h);
+        t1.c.strokeRect(0,0,t1.w,t1.h);
+        
+        t1.c.strokeStyle = "#fff";
+        t1.c.beginPath();
+        t1.c.arc(20, 45, 20, 0, Math.PI * 2);
+        t1.c.stroke();
+        
+        /* ================ */
+        
+        t2.c.fillStyle = "#751179";
+        t2.c.fillRect(t2.viewX,t2.viewY,t2.viewW,t2.viewH);
+        
+        t2.c.fillStyle = "#e0258a";
+        t2.c.strokeStyle = "#2cf1b1";
+        t2.c.lineWidth = 0.05;
+        t2.c.fillRect(0,0,t2.w,t2.h);
+        t2.c.strokeRect(0,0,t2.w,t2.h);
+        
+        t2.c.strokeStyle = "#fff";
+        t2.c.beginPath();
+        t2.c.arc(0.7, 0.6, 0.3, 0, Math.PI * 2);
+        t2.c.stroke();
+    }
+    window.requestAnimationFrame(step1);
+    
+</script>
+</html>
